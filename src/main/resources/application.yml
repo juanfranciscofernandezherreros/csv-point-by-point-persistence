@@ -1,0 +1,30 @@
+spring:
+  application:
+    name: csv-point-by-point-persistence
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PASS}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    baseline-version: 1
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+    consumer:
+      group-id: ${KAFKA_CONSUMER_GROUP_ID:csv-point-by-point-persistence}
+      auto-offset-reset: ${KAFKA_AUTO_OFFSET_RESET:earliest}
+      key-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+    properties:
+      schema.registry.url: ${KAFKA_SCHEMA_REGISTRY_URL}
+      specific.avro.reader: true
+app:
+  kafka:
+    topics:
+      parsed-point-by-point: ${KAFKA_PARSED_POINT_BY_POINT_TOPIC:point-by-point.parsed}
