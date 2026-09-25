@@ -1,4 +1,4 @@
-![version](https://img.shields.io/badge/version-1.0.3-blue)
+![version](https://img.shields.io/badge/version-1.0.4-blue)
 # csv-point-by-point-persistence
 
 Persistencia separada de `csv-point-by-point`.
