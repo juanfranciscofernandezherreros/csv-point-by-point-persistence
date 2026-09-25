@@ -1,38 +1,26 @@
 name: CI-friendly non-production version
-
 on:
   push:
     branches: [main]
   pull_request:
   workflow_dispatch:
-
 permissions:
   contents: read
-
 jobs:
   nonprod-version:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v5
-      - name: Set up JDK 21
-        uses: actions/setup-java@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '21'
           cache: maven
       - name: Resolve immutable build version
-        id: version
-        shell: bash
         run: |
-          set -euo pipefail
           short_sha="${GITHUB_SHA::8}"
-          build_version="$(mvn -q -DforceStdout -Dsha1="-${short_sha}" help:evaluate -Dexpression=project.version)"
-          echo "build_version=${build_version}" >> "${GITHUB_OUTPUT}"
-          echo "### Non-production version" >> "${GITHUB_STEP_SUMMARY}"
-          echo "\`${build_version}\`" >> "${GITHUB_STEP_SUMMARY}"
+          mvn -q -DforceStdout -Dsha1="-${short_sha}" help:evaluate -Dexpression=project.version
       - name: Verify non-production build
-        shell: bash
         run: |
           short_sha="${GITHUB_SHA::8}"
           mvn -B -Dsha1="-${short_sha}" test

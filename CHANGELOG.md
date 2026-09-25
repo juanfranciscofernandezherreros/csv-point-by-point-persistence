@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.0.2 - 2026-09-25
+
+- [patch] Exige confirmar rama y nivel SemVer antes de cualquier cambio.
+- [patch] Alinea Maven CI-friendly con revision, sha1 y changelist.
+
+## 1.0.2 - 2026-09-25
+
+- [patch] Exige confirmar rama y nivel SemVer antes de cualquier cambio.
+
 ## 1.0.1 - 2026-09-24
 - Añade auto-merge tras pasar los checks del PR y elimina la rama origen tras fusionar.
 
