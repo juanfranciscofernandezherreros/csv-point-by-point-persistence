@@ -13,6 +13,7 @@ public class KafkaErrorClassifier {
         classifications.put(IllegalArgumentException.class, false);
         classifications.put(IllegalStateException.class, false);
         classifications.put(NoSuchElementException.class, false);
+        classifications.put(NullPointerException.class, false);
         classifications.put(DataIntegrityViolationException.class, false);
         classifications.put(TransientDataAccessException.class, true);
         return classifications;
