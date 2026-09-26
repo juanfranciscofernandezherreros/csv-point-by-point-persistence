@@ -45,16 +45,20 @@ public class KafkaErrorHandlingConfig {
     }
 
     @Bean
-    DefaultErrorHandler kafkaErrorHandler(
+    DeadLetterPublishingRecoverer deadLetterPublishingRecoverer(
             KafkaTemplate<Object, Object> kafkaTemplate,
-            KafkaErrorClassifier classifier,
-            @Value("${app.kafka.error.backoff-ms:1000}") long backoffMs,
-            @Value("${app.kafka.error.max-attempts:3}") long maxAttempts,
             @Value("${app.kafka.topics.dlt}") String dltTopic) {
-
-        DeadLetterPublishingRecoverer recoverer = new DeadLetterPublishingRecoverer(
+        return new DeadLetterPublishingRecoverer(
                 kafkaTemplate,
                 (record, exception) -> new TopicPartition(dltTopic, -1));
+    }
+
+    @Bean
+    DefaultErrorHandler kafkaErrorHandler(
+            DeadLetterPublishingRecoverer recoverer,
+            KafkaErrorClassifier classifier,
+            @Value("${app.kafka.error.backoff-ms:1000}") long backoffMs,
+            @Value("${app.kafka.error.max-attempts:3}") long maxAttempts) {
 
         DefaultErrorHandler handler = new DefaultErrorHandler(
                 recoverer,
@@ -67,7 +71,7 @@ public class KafkaErrorHandlingConfig {
         return handler;
     }
 
-    private DelegatingByTypeSerializer delegatingAvroSerializer() {
+    DelegatingByTypeSerializer delegatingAvroSerializer() {
         Map<Class<?>, Serializer<?>> serializers = new LinkedHashMap<>();
         serializers.put(byte[].class, new ByteArraySerializer());
         serializers.put(Object.class, new KafkaAvroSerializer());
