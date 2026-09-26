@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.1.2 - 2026-09-26
+
+- [patch] KAN-111 añade cobertura del flujo real de recuperación de errores de deserialización hacia DLT.
+- [patch] Verifica que `ErrorHandlingDeserializer` conserva los bytes originales y que el recoverer los publica en `point-by-point.parsed.DLT`.
+- [patch] Verifica que la publicación DLT no fuerza la partición del topic origen.
+
+
 ## 1.1.1 - 2026-09-26
 
 - [patch] KAN-111 captura errores de deserialización Avro mediante `ErrorHandlingDeserializer`.
