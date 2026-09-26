@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.1.0 - 2026-09-26
+
+- [minor] KAN-111 aplica la estrategia común de errores Kafka de KAN-18.
+- [minor] Clasifica errores permanentes de protocolo/datos como non-retryable y fallos transitorios de PostgreSQL como retryable.
+- [minor] Configura retries/backoff y DLT `point-by-point.parsed.DLT`.
+- [minor] Añade tests de error permanente y transitorio.
+
+
 ## 1.0.5 - 2026-09-25
 
 - [patch] KAN-85 sustituye los schemas locales PointByPoint por `basketball-event-contracts:1.0.2`.
