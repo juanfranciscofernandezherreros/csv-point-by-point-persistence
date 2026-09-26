@@ -4,6 +4,7 @@ import com.example.csvpointbypoint.avro.PointByPointValue;
 import com.example.csvpointbypoint.entity.PointByPointEvent;
 import com.example.csvpointbypoint.entity.PointByPointEventId;
 import org.springframework.stereotype.Component;
+
 import java.util.Objects;
 
 @Component
@@ -11,6 +12,7 @@ public class PointByPointMapper {
     public PointByPointEvent toEntity(PointByPointValue v) {
         PointByPointEvent entity = new PointByPointEvent();
         entity.setId(new PointByPointEventId(
+                Objects.requireNonNull(v.getSourceEventId(),"sourceEventId"),
                 Objects.requireNonNull(v.getMatchId(),"matchId"),
                 Objects.requireNonNull(v.getQuarter(),"quarter"),
                 Objects.requireNonNull(v.getSequence(),"sequence")));
