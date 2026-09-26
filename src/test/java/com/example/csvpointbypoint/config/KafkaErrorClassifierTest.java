@@ -14,6 +14,7 @@ class KafkaErrorClassifierTest {
         assertThat(classifier.isRetryable(new IllegalArgumentException("unsupported event"))).isFalse();
         assertThat(classifier.isRetryable(new IllegalStateException("invalid import state"))).isFalse();
         assertThat(classifier.isRetryable(new DataIntegrityViolationException("constraint"))).isFalse();
+        assertThat(classifier.isRetryable(new NullPointerException("missing required field"))).isFalse();
     }
 
     @Test

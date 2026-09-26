@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.1.1 - 2026-09-26
+
+- [patch] KAN-111 captura errores de deserialización Avro mediante `ErrorHandlingDeserializer`.
+- [patch] Permite publicar en DLT tanto objetos Avro como bytes crudos usando `DelegatingByTypeSerializer`.
+- [patch] Deja que Kafka elija una partición DLT válida en lugar de forzar la partición del topic origen.
+- [patch] Clasifica los errores por campos nulos obligatorios como non-retryable y amplía sus tests.
+
+
 ## 1.1.0 - 2026-09-26
 
 - [minor] KAN-111 aplica la estrategia común de errores Kafka de KAN-18.

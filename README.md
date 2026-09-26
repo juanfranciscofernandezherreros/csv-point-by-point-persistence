@@ -1,4 +1,4 @@
-![version](https://img.shields.io/badge/version-1.1.0-blue)
+![version](https://img.shields.io/badge/version-1.1.1-blue)
 # csv-point-by-point-persistence
 
 Persistencia separada de `csv-point-by-point`.
@@ -37,4 +37,4 @@ KAN-111 aplica la política de KAN-18 al consumo de `point-by-point.parsed`.
 - `KAFKA_RETRY_BACKOFF_MS`: backoff fijo, default `1000`;
 - `KAFKA_POINT_BY_POINT_PERSISTENCE_DLT_TOPIC`: topic DLT configurable.
 
-La DLT conserva el registro original y los headers de diagnóstico generados por Spring Kafka.
+La DLT conserva el registro original y los headers de diagnóstico generados por Spring Kafka. Los deserializadores Avro están envueltos con `ErrorHandlingDeserializer`, de forma que un payload corrupto o incompatible también llega al flujo de recuperación. La publicación DLT acepta tanto objetos Avro como `byte[]` crudos y deja que Kafka seleccione una partición válida.
