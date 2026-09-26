@@ -9,6 +9,7 @@ import org.mockito.ArgumentCaptor;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.listener.DeadLetterPublishingRecoverer;
 import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
+import org.springframework.kafka.support.serializer.SerializationUtils;
 
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -16,6 +17,7 @@ import java.util.concurrent.CompletableFuture;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class KafkaDeserializationDltTest {
@@ -31,7 +33,7 @@ class KafkaDeserializationDltTest {
         byte[] value = deserializer.deserialize("point-by-point.parsed", headers, malformedAvro);
 
         assertThat(value).isNull();
-        assertThat(headers.lastHeader(ErrorHandlingDeserializer.VALUE_DESERIALIZER_EXCEPTION_HEADER)).isNotNull();
+        assertThat(headers.lastHeader(SerializationUtils.VALUE_DESERIALIZER_EXCEPTION_HEADER)).isNotNull();
 
         @SuppressWarnings("unchecked")
         KafkaTemplate<Object, Object> template = mock(KafkaTemplate.class);
@@ -42,18 +44,13 @@ class KafkaDeserializationDltTest {
                         template, "point-by-point.parsed.DLT");
 
         ConsumerRecord<Object, Object> failedRecord =
-                new ConsumerRecord<>(
-                        "point-by-point.parsed",
-                        7,
-                        42L,
-                        null,
-                        value,
-                        headers);
+                new ConsumerRecord<>("point-by-point.parsed", 7, 42L, null, value);
+        headers.forEach(failedRecord.headers()::add);
 
         recoverer.accept(failedRecord, new IllegalStateException("deserialization failed"));
 
         ArgumentCaptor<ProducerRecord<Object, Object>> captor = ArgumentCaptor.forClass(ProducerRecord.class);
-        org.mockito.Mockito.verify(template).send(captor.capture());
+        verify(template).send(captor.capture());
 
         ProducerRecord<Object, Object> dltRecord = captor.getValue();
         assertThat(dltRecord.topic()).isEqualTo("point-by-point.parsed.DLT");
