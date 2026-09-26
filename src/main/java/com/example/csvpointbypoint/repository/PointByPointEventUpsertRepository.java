@@ -4,6 +4,10 @@ import com.example.csvpointbypoint.entity.PointByPointEvent;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.List;
+
 @Repository
 public class PointByPointEventUpsertRepository {
 
@@ -34,22 +38,34 @@ public class PointByPointEventUpsertRepository {
     }
 
     public void upsert(PointByPointEvent event) {
-        jdbcTemplate.update(
+        jdbcTemplate.update(UPSERT_SQL, ps -> bind(ps, event));
+    }
+
+    public void upsertBatch(List<PointByPointEvent> events) {
+        if (events.isEmpty()) {
+            return;
+        }
+        jdbcTemplate.batchUpdate(
                 UPSERT_SQL,
-                event.getId().getSourceEventId(),
-                event.getId().getMatchId(),
-                event.getId().getQuarter(),
-                event.getId().getSequence(),
-                event.getRecordType(),
-                event.getHomeScore(),
-                event.getAwayScore(),
-                event.getHomePointsAdded(),
-                event.getAwayPointsAdded(),
-                event.getLeaderSide(),
-                event.getAdvantage(),
-                event.getAdvantageDirection(),
-                event.isHomeIsWinning(),
-                event.isAwayIsWinning()
-        );
+                events,
+                events.size(),
+                (ps, event) -> bind(ps, event));
+    }
+
+    private void bind(PreparedStatement ps, PointByPointEvent event) throws SQLException {
+        ps.setString(1, event.getId().getSourceEventId());
+        ps.setString(2, event.getId().getMatchId());
+        ps.setString(3, event.getId().getQuarter());
+        ps.setInt(4, event.getId().getSequence());
+        ps.setString(5, event.getRecordType());
+        ps.setInt(6, event.getHomeScore());
+        ps.setInt(7, event.getAwayScore());
+        ps.setInt(8, event.getHomePointsAdded());
+        ps.setInt(9, event.getAwayPointsAdded());
+        ps.setString(10, event.getLeaderSide());
+        ps.setString(11, event.getAdvantage());
+        ps.setString(12, event.getAdvantageDirection());
+        ps.setBoolean(13, event.isHomeIsWinning());
+        ps.setBoolean(14, event.isAwayIsWinning());
     }
 }

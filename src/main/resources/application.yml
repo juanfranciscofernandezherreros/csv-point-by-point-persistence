@@ -6,6 +6,9 @@ spring:
     username: ${DB_USER}
     password: ${DB_PASS}
     driver-class-name: org.postgresql.Driver
+    hikari:
+      data-source-properties:
+        reWriteBatchedInserts: true
   jpa:
     open-in-view: false
     hibernate:
@@ -16,9 +19,12 @@ spring:
     baseline-version: 1
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+    listener:
+      type: batch
     consumer:
       group-id: ${KAFKA_CONSUMER_GROUP_ID:csv-point-by-point-persistence}
       auto-offset-reset: ${KAFKA_AUTO_OFFSET_RESET:earliest}
+      max-poll-records: ${KAFKA_MAX_POLL_RECORDS:500}
       key-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
       properties:

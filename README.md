@@ -1,4 +1,4 @@
-![version](https://img.shields.io/badge/version-1.2.0-blue)
+![version](https://img.shields.io/badge/version-1.3.0-blue)
 # csv-point-by-point-persistence
 
 Persistencia separada de `csv-point-by-point`.
@@ -32,6 +32,19 @@ La recuperación queda definida así:
 - dos imports diferentes del mismo partido conservan filas separadas y se verifican de forma independiente.
 
 La migración V5 asigna a filas históricas anteriores un identificador `legacy:<match_id>` antes de convertir `source_event_id` en NOT NULL, preservando los datos existentes.
+
+## Persistencia batch
+
+KAN-128 aplica la fase de rendimiento de KAN-22 a POINT-BY-POINT.
+
+- El listener Kafka consume lotes de hasta `KAFKA_MAX_POLL_RECORDS` (default `500`).
+- START, COMPLETED y FAILED siguen actuando como barreras del protocolo.
+- ROW consecutivas del mismo `sourceEventId` se mapean y escriben mediante un único `JdbcTemplate.batchUpdate`.
+- PostgreSQL usa `reWriteBatchedInserts=true` para reducir round-trips.
+- `rowsRead` y `rowsPersisted` se actualizan una vez por grupo de ROW, no por registro.
+- El batch completo se procesa dentro de una transacción; si una validación o COMPLETED falla, las escrituras del batch se revierten y Kafka puede redeliverarlo con la idempotencia ya definida.
+
+La suite de integración incluye una medición reproducible de 1.000 filas comparando el camino secuencial contra el batch JDBC y escribe el throughput observado en el log de CI.
 
 ## Contratos Avro compartidos
 
