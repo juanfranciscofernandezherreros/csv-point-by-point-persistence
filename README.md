@@ -1,4 +1,4 @@
-![version](https://img.shields.io/badge/version-1.0.5-blue)
+![version](https://img.shields.io/badge/version-1.1.0-blue)
 # csv-point-by-point-persistence
 
 Persistencia separada de `csv-point-by-point`.
@@ -24,3 +24,17 @@ Las filas se identifican por `(match_id, quarter, sequence)` y se guardan de for
 Se conserva la API `GET /imports/{eventId}` y la tabla `point_by_point_import`. En la arquitectura dividida, `rowsPersisted` avanza a medida que Kafka entrega filas; `COMPLETED` solo se acepta tras verificar el total esperado y el recuento de `point_by_point_event`.
 
 Variables: `DB_URL`, `DB_USER`, `DB_PASS`, `KAFKA_BOOTSTRAP_SERVERS`, `KAFKA_SCHEMA_REGISTRY_URL`, `KAFKA_PARSED_POINT_BY_POINT_TOPIC`.
+
+
+## Estrategia de errores Kafka
+
+KAN-111 aplica la política de KAN-18 al consumo de `point-by-point.parsed`.
+
+- errores permanentes del protocolo START/ROW/COMPLETED/FAILED y de integridad: non-retryable;
+- fallos transitorios de PostgreSQL: retryable;
+- mensajes agotados: `point-by-point.parsed.DLT`;
+- `KAFKA_RETRY_MAX_ATTEMPTS`: intentos totales, default `3`;
+- `KAFKA_RETRY_BACKOFF_MS`: backoff fijo, default `1000`;
+- `KAFKA_POINT_BY_POINT_PERSISTENCE_DLT_TOPIC`: topic DLT configurable.
+
+La DLT conserva el registro original y los headers de diagnóstico generados por Spring Kafka.
