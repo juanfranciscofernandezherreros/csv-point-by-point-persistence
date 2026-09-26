@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.2.0 - 2026-09-26
+
+- [minor] KAN-59 hace START reanudable y ROW idempotente mediante upsert atómico por import.
+- [minor] KAN-60 añade `source_event_id` a la identidad de `point_by_point_event` y verifica COMPLETED solo contra filas del import actual.
+- [minor] Conserva imports históricos mediante backfill `legacy:<match_id>` durante la migración V5.
+- [minor] Añade tests de recuperación parcial, ROW/COMPLETED redelivered, imports múltiples del mismo match y entrega dispersa.
+
 ## 1.1.2 - 2026-09-26
 
 - [patch] KAN-111 añade cobertura del flujo real de recuperación de errores de deserialización hacia DLT.
