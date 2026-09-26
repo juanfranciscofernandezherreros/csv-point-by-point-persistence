@@ -21,6 +21,9 @@ spring:
       auto-offset-reset: ${KAFKA_AUTO_OFFSET_RESET:earliest}
       key-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
       value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+    producer:
+      key-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+      value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
     properties:
       schema.registry.url: ${KAFKA_SCHEMA_REGISTRY_URL}
       specific.avro.reader: true
@@ -28,3 +31,7 @@ app:
   kafka:
     topics:
       parsed-point-by-point: ${KAFKA_PARSED_POINT_BY_POINT_TOPIC:point-by-point.parsed}
+      dlt: ${KAFKA_POINT_BY_POINT_PERSISTENCE_DLT_TOPIC:point-by-point.parsed.DLT}
+    error:
+      max-attempts: ${KAFKA_RETRY_MAX_ATTEMPTS:3}
+      backoff-ms: ${KAFKA_RETRY_BACKOFF_MS:1000}
