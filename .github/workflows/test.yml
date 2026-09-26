@@ -21,7 +21,7 @@ jobs:
           java-version: '21'
           cache: maven
           server-id: github
-      - name: Run tests
-        run: mvn -B test
+      - name: Run unit and integration tests
+        run: mvn -B verify -Pintegration
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
