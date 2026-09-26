@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.3.0 - 2026-09-26
+
+- [minor] KAN-128 activa consumo Kafka batch con un máximo configurable de 500 registros por poll.
+- [minor] Agrupa ROW consecutivas por `sourceEventId` y las persiste con `JdbcTemplate.batchUpdate`.
+- [minor] Activa `reWriteBatchedInserts` para PostgreSQL y actualiza el progreso una vez por grupo.
+- [minor] Mantiene START/COMPLETED/FAILED como barreras transaccionales e idempotentes.
+- [minor] Añade tests de rollback del batch y una medición de throughput secuencial vs JDBC batch sobre 1.000 filas.
+
+
 ## 1.2.0 - 2026-09-26
 
 - [minor] KAN-59 hace START reanudable y ROW idempotente mediante upsert atómico por import.
